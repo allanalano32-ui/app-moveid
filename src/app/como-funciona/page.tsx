@@ -2,219 +2,223 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Play, Upload, BarChart3, Shield, Smartphone, Zap, CheckCircle, Video, Cpu, FileText } from 'lucide-react'
+import { CheckCircle, ArrowRight, Smartphone, Upload, BarChart3, Shield, Users, Star } from 'lucide-react'
 
 export default function ComoFunciona() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <Link href="/" className="flex items-center space-x-2" prefetch={false}>
+        <Link href="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">M</span>
           </div>
           <span className="text-xl font-bold text-gray-900">MoveID</span>
         </Link>
-        <nav className="hidden md:flex space-x-6">
-          <Link href="/como-funciona" className="text-blue-600 font-semibold" prefetch={false}>
-            Como Funciona
-          </Link>
-          <Link href="/planos" className="text-gray-600 hover:text-blue-600 transition-colors" prefetch={false}>
-            Planos
-          </Link>
-          <Link href="/faq" className="text-gray-600 hover:text-blue-600 transition-colors" prefetch={false}>
-            FAQ
-          </Link>
-          <Link href="/contato" className="text-gray-600 hover:text-blue-600 transition-colors" prefetch={false}>
-            Contato
-          </Link>
-        </nav>
         <div className="flex space-x-2">
           <Button variant="outline" asChild>
-            <Link href="/login" prefetch={false}>Entrar</Link>
+            <Link href="/login">Entrar</Link>
           </Button>
           <Button asChild>
-            <Link href="/planos" prefetch={false}>Assinar Premium</Link>
+            <Link href="/cadastro">Criar Conta</Link>
           </Button>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="container mx-auto px-4 py-20 text-center">
         <Badge variant="secondary" className="mb-4">
-          Entenda o Processo
+          Como funciona a análise
         </Badge>
-        <h1 className="text-4xl font-bold text-gray-900 mb-6">
-          Como o MoveID Funciona
+        <h1 className="text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto">
+          Análise Biomecânica em 3 Passos Simples
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Descubra como nossa IA analisa seus movimentos e fornece feedback biomecânico preciso em segundos.
+          Descubra como nossa IA analisa seus movimentos e fornece feedback preciso para melhorar sua performance.
         </p>
       </section>
 
-      {/* Step by Step */}
+      {/* Processo */}
       <section className="container mx-auto px-4 py-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <Card className="text-center">
-            <CardHeader>
-              <Video className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <CardTitle className="text-lg">1. Capture o Vídeo</CardTitle>
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <Card className="text-center relative">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                1
+              </div>
+            </div>
+            <CardHeader className="pt-8">
+              <Upload className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <CardTitle>Envie seu Vídeo</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
-                Grave um vídeo curto (5-10s) do seu exercício usando a câmera do celular ou faça upload de um vídeo existente.
+              <CardDescription className="text-base">
+                Grave ou faça upload de um vídeo de 5-15 segundos do seu exercício. 
+                Certifique-se de que todo o corpo esteja visível.
               </CardDescription>
             </CardContent>
           </Card>
-          <Card className="text-center">
-            <CardHeader>
-              <Cpu className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <CardTitle className="text-lg">2. IA Processa</CardTitle>
+
+          <Card className="text-center relative">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                2
+              </div>
+            </div>
+            <CardHeader className="pt-8">
+              <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <CardTitle>IA Analisa</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
-                Nossa IA usa TensorFlow e MediaPipe para detectar pontos-chave do corpo e calcular ângulos articulares.
+              <CardDescription className="text-base">
+                Nossa inteligência artificial detecta pontos-chave do corpo, 
+                calcula ângulos articulares e identifica padrões de movimento.
               </CardDescription>
             </CardContent>
           </Card>
-          <Card className="text-center">
-            <CardHeader>
-              <BarChart3 className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-              <CardTitle className="text-lg">3. Análise Biomecânica</CardTitle>
+
+          <Card className="text-center relative">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                3
+              </div>
+            </div>
+            <CardHeader className="pt-8">
+              <CheckCircle className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+              <CardTitle>Receba Feedback</CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
-                Calculamos postura, valgo/varo do joelho, amplitude de movimento e estabilidade lateral.
-              </CardDescription>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardHeader>
-              <FileText className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-              <CardTitle className="text-lg">4. Feedback Instantâneo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Receba uma nota de 0-100 e dicas personalizadas para melhorar sua técnica de exercício.
+              <CardDescription className="text-base">
+                Obtenha uma pontuação de 0-100, análise detalhada dos erros 
+                e sugestões personalizadas para melhorar.
               </CardDescription>
             </CardContent>
           </Card>
         </div>
+
+        <div className="text-center">
+          <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
+            <Link href="/analise">
+              Testar Agora
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
       </section>
 
-      {/* Technical Details */}
+      {/* Recursos */}
       <section className="bg-white py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            O que a IA Analisa
+            Recursos Avançados
           </h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-2xl font-semibold mb-6">Métricas Biomecânicas</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-600 mr-3 mt-0.5" />
-                  <div>
-                    <strong>Ângulo do Joelho:</strong> Detecta flexão/extensão adequada durante agachamentos e saltos.
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-600 mr-3 mt-0.5" />
-                  <div>
-                    <strong>Ângulo do Quadril:</strong> Avalia profundidade e alinhamento do movimento.
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-600 mr-3 mt-0.5" />
-                  <div>
-                    <strong>Postura do Tronco:</strong> Verifica inclinação e rotação durante exercícios.
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-600 mr-3 mt-0.5" />
-                  <div>
-                    <strong>Valgo/Varo do Joelho:</strong> Identifica joelhos voltados para dentro/fora.
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-600 mr-3 mt-0.5" />
-                  <div>
-                    <strong>Amplitude de Movimento:</strong> Mede alcance completo das articulações.
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="h-6 w-6 text-green-600 mr-3 mt-0.5" />
-                  <div>
-                    <strong>Estabilidade Lateral:</strong> Avalia equilíbrio e controle durante o movimento.
-                  </div>
-                </li>
-              </ul>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center">
+              <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Detecção de Postura</h3>
+              <p className="text-gray-600">
+                Identifica desvios posturais e problemas de alinhamento corporal.
+              </p>
             </div>
-            <div>
-              <h3 className="text-2xl font-semibold mb-6">Tecnologia Utilizada</h3>
-              <div className="space-y-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900">TensorFlow.js</h4>
-                  <p className="text-blue-700">Framework de machine learning que roda no navegador e mobile.</p>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-green-900">MediaPipe</h4>
-                  <p className="text-green-700">Biblioteca Google para detecção de pose em tempo real.</p>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-purple-900">MoveNet</h4>
-                  <p className="text-purple-700">Modelo de IA para estimativa de pose de alta precisão.</p>
-                </div>
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-orange-900">Processamento Local</h4>
-                  <p className="text-orange-700">Análise acontece no dispositivo para máxima privacidade.</p>
-                </div>
-              </div>
+            <div className="text-center">
+              <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Análise Angular</h3>
+              <p className="text-gray-600">
+                Mede ângulos articulares com precisão para otimizar movimentos.
+              </p>
+            </div>
+            <div className="text-center">
+              <Users className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Comparação</h3>
+              <p className="text-gray-600">
+                Compare seus movimentos com padrões ideais e atletas profissionais.
+              </p>
+            </div>
+            <div className="text-center">
+              <Star className="h-12 w-12 text-orange-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Evolução</h3>
+              <p className="text-gray-600">
+                Acompanhe seu progresso ao longo do tempo com relatórios detalhados.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Demo Video */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">
-          Veja Como Funciona na Prática
+      {/* Exercícios Suportados */}
+      <section className="container mx-auto px-4 py-20">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          Exercícios Suportados
         </h2>
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gray-200 rounded-lg h-96 flex items-center justify-center">
-            <div className="text-center">
-              <Video className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Vídeo demonstrativo do MoveID em ação</p>
-              <p className="text-sm text-gray-500 mt-2">Em breve disponível</p>
-            </div>
-          </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            'Agachamento',
+            'Levantamento Terra',
+            'Supino',
+            'Desenvolvimento',
+            'Remada',
+            'Flexão',
+            'Burpee',
+            'Prancha',
+            'Corrida'
+          ].map((exercise, index) => (
+            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                <h3 className="font-semibold">{exercise}</h3>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-600 text-white py-20">
+      <section className="bg-gradient-to-r from-blue-600 to-green-600 py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Pronto para Testar?
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Pronto para começar?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
-            Comece sua primeira análise gratuita agora.
+          <p className="text-xl text-blue-100 mb-8">
+            Crie sua conta gratuita e faça sua primeira análise agora.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
-              <Link href="/analise" prefetch={false}>
+              <Link href="/cadastro">
                 <Smartphone className="mr-2 h-5 w-5" />
-                Começar Análise
+                Criar Conta Grátis
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600" asChild>
-              <Link href="/planos" prefetch={false}>
+            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600" asChild>
+              <Link href="/planos">
                 Ver Planos Premium
               </Link>
             </Button>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-4 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">M</span>
+            </div>
+            <span className="text-xl font-bold">MoveID</span>
+          </div>
+          <p className="text-gray-400 mb-4">
+            IA que entende seu movimento para resultados reais.
+          </p>
+          <div className="flex justify-center space-x-6 text-sm">
+            <Link href="/privacidade" className="hover:text-white">Privacidade</Link>
+            <Link href="/termos" className="hover:text-white">Termos</Link>
+            <Link href="/contato" className="hover:text-white">Contato</Link>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 MoveID. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

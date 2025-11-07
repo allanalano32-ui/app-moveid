@@ -48,13 +48,16 @@
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   
-  /* Additional font families for AI usage */
+  /* Font families for Tailwind classes */
+  --font-geist-sans: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
   --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-roboto: "Roboto", ui-sans-serif, system-ui, sans-serif;
   --font-open-sans: "Open Sans", ui-sans-serif, system-ui, sans-serif;
   --font-source-code: "Source Code Pro", ui-monospace, SFMono-Regular, monospace;
   --font-fira-code: "Fira Code", ui-monospace, SFMono-Regular, monospace;
   --font-jetbrains: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -126,5 +129,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans);
   }
 }
