@@ -20,7 +20,7 @@ export default function RootLayout({
       <head>
         <Script src="/lasy-bridge.js" strategy="beforeInteractive" />
       </head>
-      <body className="font-geist-sans antialiased">
+      <body className="antialiased" style={{ fontFamily: '"Geist Sans", ui-sans-serif, system-ui, sans-serif' }}>
         {children}
       </body>
     </html>

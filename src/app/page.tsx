@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Play, Upload, BarChart3, Shield, Smartphone, Zap } from 'lucide-react'
+import { Play, Upload, BarChart3, Shield, Smartphone, Zap, FileText } from 'lucide-react'
 
 export default function Home() {
   return (
@@ -18,6 +18,9 @@ export default function Home() {
         <nav className="hidden md:flex space-x-6">
           <Link href="/como-funciona" className="text-gray-600 hover:text-blue-600 transition-colors" prefetch={false}>
             Como Funciona
+          </Link>
+          <Link href="/relatorios" className="text-gray-600 hover:text-blue-600 transition-colors" prefetch={false}>
+            Relatórios
           </Link>
           <Link href="/planos" className="text-gray-600 hover:text-blue-600 transition-colors" prefetch={false}>
             Planos
@@ -59,9 +62,9 @@ export default function Home() {
             </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link href="/login" prefetch={false}>
-              <Upload className="mr-2 h-5 w-5" />
-              Criar Conta
+            <Link href="/relatorios" prefetch={false}>
+              <FileText className="mr-2 h-5 w-5" />
+              Ver Relatório Demo
             </Link>
           </Button>
         </div>
@@ -148,6 +151,66 @@ export default function Home() {
         </div>
       </section>
 
+      {/* New Section - Relatórios */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Relatórios Completos e Detalhados
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Receba análises biomecânicas profissionais em PDF com métricas precisas, 
+            recomendações personalizadas e guias completos de vestimenta e gravação.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
+          <Card className="text-center">
+            <CardHeader>
+              <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <CardTitle>Análise Detalhada</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>
+                Métricas biomecânicas precisas com ângulos articulares, fases do movimento e interpretação profissional.
+              </CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center">
+            <CardHeader>
+              <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <CardTitle>Recomendações</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>
+                Dicas personalizadas baseadas na sua análise para corrigir erros e melhorar a técnica de movimento.
+              </CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center">
+            <CardHeader>
+              <Smartphone className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+              <CardTitle>Guias Práticos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription>
+                Instruções completas sobre vestimenta adequada e técnicas de gravação para máxima precisão.
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="text-center">
+          <Button size="lg" variant="outline" asChild>
+            <Link href="/relatorios" prefetch={false}>
+              <FileText className="mr-2 h-5 w-5" />
+              Ver Exemplo de Relatório
+            </Link>
+          </Button>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="container mx-auto px-4 py-20 text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -182,6 +245,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link href="/como-funciona" className="hover:text-white" prefetch={false}>Como Funciona</Link></li>
+                <li><Link href="/relatorios" className="hover:text-white" prefetch={false}>Relatórios</Link></li>
                 <li><Link href="/planos" className="hover:text-white" prefetch={false}>Planos</Link></li>
                 <li><Link href="/analise" className="hover:text-white" prefetch={false}>Análise</Link></li>
               </ul>
