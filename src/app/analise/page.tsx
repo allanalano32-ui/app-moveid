@@ -6,46 +6,160 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Upload, Video, Camera, Play, CheckCircle, AlertCircle } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Upload, Video, Camera, Play, CheckCircle, AlertCircle, Smartphone, Brain, Image as ImageIcon } from 'lucide-react'
+import VideoRecorder from '@/components/video-recorder'
+import ImageAnalyzer from '@/components/image-analyzer'
+import ScientificResults from '@/components/scientific-results'
+import { VideoAnalysisResult, ImageAnalysisResult } from '@/lib/openai'
 
 export default function Analise() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [recordedVideo, setRecordedVideo] = useState<Blob | null>(null)
+  const [exerciseType, setExerciseType] = useState<string>('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisComplete, setAnalysisComplete] = useState(false)
-  const [analysisResult, setAnalysisResult] = useState<any>(null)
+  const [analysisResult, setAnalysisResult] = useState<VideoAnalysisResult | null>(null)
+  const [analysisProgress, setAnalysisProgress] = useState(0)
+  const [showRecorder, setShowRecorder] = useState(false)
+  const [activeTab, setActiveTab] = useState('video')
+  const [videoFrame, setVideoFrame] = useState<string | undefined>(undefined)
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       setSelectedFile(file)
+      setRecordedVideo(null) // Limpar vídeo gravado se arquivo foi selecionado
+      
+      // Extrair frame do vídeo para análise
+      extractVideoFrame(file)
     }
   }
 
-  const handleAnalysis = async () => {
-    if (!selectedFile) return
+  const extractVideoFrame = (videoFile: File) => {
+    const video = document.createElement('video')
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    
+    video.onloadedmetadata = () => {
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      
+      // Capturar frame no meio do vídeo
+      video.currentTime = video.duration / 2
+    }
+    
+    video.onseeked = () => {
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+        const frameData = canvas.toDataURL('image/jpeg', 0.8)
+        setVideoFrame(frameData)
+      }
+    }
+    
+    video.src = URL.createObjectURL(videoFile)
+  }
+
+  const handleVideoRecorded = (videoBlob: Blob) => {
+    setRecordedVideo(videoBlob)
+    setSelectedFile(null) // Limpar arquivo selecionado se vídeo foi gravado
+    setShowRecorder(false)
+    
+    // Extrair frame do vídeo gravado
+    const videoFile = new File([videoBlob], `recorded-video-${Date.now()}.webm`, {
+      type: videoBlob.type
+    })
+    extractVideoFrame(videoFile)
+  }
+
+  const handleVideoAnalysis = async () => {
+    const videoToAnalyze = selectedFile || recordedVideo
+    if (!videoToAnalyze) return
 
     setIsAnalyzing(true)
+    setAnalysisProgress(0)
 
-    // Simular análise (em produção, isso seria feito com TensorFlow.js)
-    setTimeout(() => {
-      const mockResult = {
-        score: 78,
-        feedback: [
-          "Excelente alinhamento dos joelhos durante o movimento",
-          "Considere aumentar a profundidade do agachamento",
-          "Mantenha os pés paralelos durante toda a execução"
-        ],
-        metrics: {
-          kneeAngle: 85,
-          hipAngle: 92,
-          trunkAngle: 78
-        }
+    try {
+      // Simular progresso
+      const progressInterval = setInterval(() => {
+        setAnalysisProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval)
+            return 90
+          }
+          return prev + 10
+        })
+      }, 300)
+
+      // Preparar FormData
+      const formData = new FormData()
+      
+      if (selectedFile) {
+        formData.append('video', selectedFile)
+      } else if (recordedVideo) {
+        // Converter Blob para File
+        const videoFile = new File([recordedVideo], `recorded-video-${Date.now()}.webm`, {
+          type: recordedVideo.type
+        })
+        formData.append('video', videoFile)
+      }
+      
+      if (exerciseType) {
+        formData.append('exerciseType', exerciseType)
       }
 
-      setAnalysisResult(mockResult)
-      setAnalysisComplete(true)
+      // Chamar API de análise
+      const response = await fetch('/api/analyze-video', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro na análise do vídeo')
+      }
+
+      const result = await response.json()
+      
+      clearInterval(progressInterval)
+      setAnalysisProgress(100)
+      
+      setTimeout(() => {
+        setAnalysisResult(result.analysis)
+        setAnalysisComplete(true)
+        setIsAnalyzing(false)
+      }, 500)
+
+    } catch (error) {
+      console.error('Erro na análise:', error)
       setIsAnalyzing(false)
-    }, 3000)
+      setAnalysisProgress(0)
+    }
+  }
+
+  const resetAnalysis = () => {
+    setSelectedFile(null)
+    setRecordedVideo(null)
+    setAnalysisComplete(false)
+    setAnalysisResult(null)
+    setAnalysisProgress(0)
+    setExerciseType('')
+    setShowRecorder(false)
+    setVideoFrame(undefined)
+  }
+
+  const getScoreColor = (score: number) => {
+    if (score >= 85) return 'text-green-600'
+    if (score >= 70) return 'text-blue-600'
+    if (score >= 50) return 'text-yellow-600'
+    return 'text-red-600'
+  }
+
+  const getScoreLabel = (score: number) => {
+    if (score >= 85) return 'Excelente'
+    if (score >= 70) return 'Bom'
+    if (score >= 50) return 'Regular'
+    return 'Precisa Melhorar'
   }
 
   return (
@@ -72,206 +186,224 @@ export default function Analise() {
       </header>
 
       <div className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {!analysisComplete ? (
             <>
-              {/* Upload Section */}
+              {/* Header Section */}
               <div className="text-center mb-12">
                 <Badge variant="secondary" className="mb-4">
-                  Análise Biomecânica
+                  <Brain className="mr-2 h-4 w-4" />
+                  Análise Científica com IA Avançada
                 </Badge>
                 <h1 className="text-4xl font-bold text-gray-900 mb-6">
-                  Analise seu Movimento
+                  Análise Biomecânica Computacional
                 </h1>
                 <p className="text-xl text-gray-600 mb-8">
-                  Faça upload de um vídeo ou grave diretamente no navegador para receber feedback instantâneo.
+                  Grave um vídeo, faça upload ou tire uma foto para receber análise biomecânica detalhada com parâmetros científicos e relatório completo.
                 </p>
               </div>
 
-              {/* Upload Options */}
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <Card className="text-center">
-                  <CardHeader>
-                    <Upload className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                    <CardTitle>Fazer Upload</CardTitle>
-                    <CardDescription>
-                      Envie um vídeo existente do seu dispositivo
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                      id="video-upload"
-                    />
-                    <label htmlFor="video-upload">
-                      <Button variant="outline" className="w-full" asChild>
-                        <span className="cursor-pointer">
-                          <Video className="mr-2 h-4 w-4" />
-                          Selecionar Vídeo
-                        </span>
+              {/* Analysis Type Tabs */}
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="video" className="flex items-center">
+                    <Video className="mr-2 h-4 w-4" />
+                    Análise de Vídeo
+                  </TabsTrigger>
+                  <TabsTrigger value="image" className="flex items-center">
+                    <ImageIcon className="mr-2 h-4 w-4" />
+                    Análise de Imagem
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Video Analysis Tab */}
+                <TabsContent value="video" className="space-y-8">
+                  {/* Exercise Type Selection */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Tipo de Exercício (Recomendado)</CardTitle>
+                      <CardDescription>
+                        Selecione o tipo de exercício para análise biomecânica mais precisa e parâmetros específicos
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Select value={exerciseType} onValueChange={setExerciseType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o tipo de exercício" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="agachamento">Agachamento</SelectItem>
+                          <SelectItem value="deadlift">Levantamento Terra</SelectItem>
+                          <SelectItem value="supino">Supino</SelectItem>
+                          <SelectItem value="flexao">Flexão de Braço</SelectItem>
+                          <SelectItem value="corrida">Corrida</SelectItem>
+                          <SelectItem value="salto">Salto</SelectItem>
+                          <SelectItem value="outro">Outro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </CardContent>
+                  </Card>
+
+                  {/* Upload/Recording Options */}
+                  {!showRecorder ? (
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <Card className="text-center">
+                        <CardHeader>
+                          <Upload className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                          <CardTitle>Fazer Upload</CardTitle>
+                          <CardDescription>
+                            Envie um vídeo existente do seu dispositivo
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <input
+                            type="file"
+                            accept="video/*"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                            id="video-upload"
+                          />
+                          <label htmlFor="video-upload">
+                            <Button variant="outline" className="w-full" asChild>
+                              <span className="cursor-pointer">
+                                <Video className="mr-2 h-4 w-4" />
+                                Selecionar Vídeo
+                              </span>
+                            </Button>
+                          </label>
+                          {selectedFile && (
+                            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                              <p className="text-sm text-green-700 font-medium">
+                                ✓ {selectedFile.name}
+                              </p>
+                              <p className="text-xs text-green-600">
+                                {(selectedFile.size / 1024 / 1024).toFixed(1)} MB
+                              </p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      <Card className="text-center">
+                        <CardHeader>
+                          <Camera className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                          <CardTitle>Gravar Vídeo</CardTitle>
+                          <CardDescription>
+                            Use a câmera do celular para gravar
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => setShowRecorder(true)}
+                          >
+                            <Smartphone className="mr-2 h-4 w-4" />
+                            Abrir Câmera
+                          </Button>
+                          {recordedVideo && (
+                            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                              <p className="text-sm text-green-700 font-medium">
+                                ✓ Vídeo gravado com sucesso
+                              </p>
+                              <p className="text-xs text-green-600">
+                                {(recordedVideo.size / 1024 / 1024).toFixed(1)} MB
+                              </p>
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-500 mt-2">
+                            Recomendado para melhor qualidade
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ) : (
+                    <div>
+                      <VideoRecorder
+                        onVideoRecorded={handleVideoRecorded}
+                        maxDuration={30}
+                      />
+                      <div className="text-center mt-4">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setShowRecorder(false)}
+                        >
+                          Voltar às Opções
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Analysis Button */}
+                  {(selectedFile || recordedVideo) && !isAnalyzing && (
+                    <div className="text-center">
+                      <Button
+                        size="lg"
+                        onClick={handleVideoAnalysis}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Brain className="mr-2 h-5 w-5" />
+                        Iniciar Análise Científica
                       </Button>
-                    </label>
-                    {selectedFile && (
-                      <p className="text-sm text-gray-600 mt-2">
-                        Arquivo selecionado: {selectedFile.name}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
+                    </div>
+                  )}
 
-                <Card className="text-center">
-                  <CardHeader>
-                    <Camera className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                    <CardTitle>Gravar Vídeo</CardTitle>
-                    <CardDescription>
-                      Use a câmera do navegador para gravar
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button variant="outline" className="w-full">
-                      <Camera className="mr-2 h-4 w-4" />
-                      Abrir Câmera
-                    </Button>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Recomendado para melhor qualidade
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+                  {/* Analyzing State */}
+                  {isAnalyzing && (
+                    <Card className="text-center">
+                      <CardContent className="py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                        <h3 className="text-xl font-semibold mb-2">Processando Análise Biomecânica...</h3>
+                        <p className="text-gray-600 mb-4">
+                          Nossa IA está realizando análise computacional detalhada com parâmetros científicos avançados.
+                        </p>
+                        <Progress value={analysisProgress} className="max-w-xs mx-auto mb-2" />
+                        <p className="text-sm text-gray-500">
+                          {analysisProgress < 30 && "Extraindo frames e identificando pontos anatômicos..."}
+                          {analysisProgress >= 30 && analysisProgress < 60 && "Calculando ângulos articulares e padrões de movimento..."}
+                          {analysisProgress >= 60 && analysisProgress < 90 && "Analisando parâmetros biomecânicos e cinéticos..."}
+                          {analysisProgress >= 90 && "Gerando relatório científico completo..."}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </TabsContent>
 
-              {/* Analysis Button */}
-              {selectedFile && !isAnalyzing && (
-                <div className="text-center">
-                  <Button
-                    size="lg"
-                    onClick={handleAnalysis}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Play className="mr-2 h-5 w-5" />
-                    Iniciar Análise
-                  </Button>
-                </div>
-              )}
-
-              {/* Analyzing State */}
-              {isAnalyzing && (
-                <Card className="text-center">
-                  <CardContent className="py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <h3 className="text-xl font-semibold mb-2">Analisando seu movimento...</h3>
-                    <p className="text-gray-600 mb-4">
-                      Nossa IA está processando o vídeo e calculando as métricas biomecânicas.
-                    </p>
-                    <Progress value={66} className="max-w-xs mx-auto" />
-                    <p className="text-sm text-gray-500 mt-2">Tempo estimado: 5-10 segundos</p>
-                  </CardContent>
-                </Card>
-              )}
+                {/* Image Analysis Tab */}
+                <TabsContent value="image">
+                  <ImageAnalyzer 
+                    onAnalysisComplete={(result) => {
+                      // Converter resultado de imagem para formato de vídeo para compatibilidade
+                      const videoResult: VideoAnalysisResult = {
+                        score: 85, // Score padrão para imagens
+                        description: result.description,
+                        movement_phases: [],
+                        biomechanics: result.biomechanics || {
+                          joint_angles: {},
+                          muscle_activation: [],
+                          risk_factors: [],
+                          movement_quality: 'Análise baseada em imagem estática'
+                        },
+                        recommendations: result.movement_analysis?.recommendations || [],
+                        confidence_score: result.confidence_score
+                      }
+                      setAnalysisResult(videoResult)
+                      setAnalysisComplete(true)
+                    }}
+                  />
+                </TabsContent>
+              </Tabs>
             </>
           ) : (
-            /* Results Section */
-            <div className="space-y-8">
-              <div className="text-center">
-                <Badge variant="secondary" className="mb-4">
-                  Análise Completa
-                </Badge>
-                <h1 className="text-4xl font-bold text-gray-900 mb-6">
-                  Resultado da Análise
-                </h1>
-              </div>
-
-              {/* Score Card */}
-              <Card className="text-center">
-                <CardContent className="py-12">
-                  <div className="text-6xl font-bold text-blue-600 mb-4">
-                    {analysisResult.score}
-                  </div>
-                  <div className="text-xl text-gray-600 mb-2">Sua Nota</div>
-                  <Badge variant="secondary" className="text-lg px-4 py-2">
-                    {analysisResult.score >= 80 ? 'Excelente' : analysisResult.score >= 60 ? 'Bom' : 'Precisa Melhorar'}
-                  </Badge>
-                </CardContent>
-              </Card>
-
-              {/* Feedback */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <CheckCircle className="mr-2 h-5 w-5 text-green-600" />
-                    Feedback e Dicas
-                  </CardTitle>
-                  <CardDescription>
-                    Sugestões personalizadas para melhorar sua técnica
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {analysisResult.feedback.map((tip: string, index: number) => (
-                      <li key={index} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-
-              {/* Metrics */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Métricas Biomecânicas</CardTitle>
-                  <CardDescription>
-                    Detalhes técnicos da sua execução
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600 mb-2">
-                        {analysisResult.metrics.kneeAngle}°
-                      </div>
-                      <div className="text-sm text-gray-600">Ângulo do Joelho</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600 mb-2">
-                        {analysisResult.metrics.hipAngle}°
-                      </div>
-                      <div className="text-sm text-gray-600">Ângulo do Quadril</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600 mb-2">
-                        {analysisResult.metrics.trunkAngle}°
-                      </div>
-                      <div className="text-sm text-gray-600">Ângulo do Tronco</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/dashboard">
-                    Voltar ao Dashboard
-                  </Link>
-                </Button>
-                <Button size="lg" asChild>
-                  <Link href="/relatorios">
-                    Gerar Relatório PDF
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => {
-                  setSelectedFile(null)
-                  setAnalysisComplete(false)
-                  setAnalysisResult(null)
-                }}>
-                  Nova Análise
-                </Button>
-              </div>
-            </div>
+            /* Results Section - Novo Componente Científico */
+            analysisResult && (
+              <ScientificResults
+                analysisResult={analysisResult}
+                exerciseType={exerciseType || 'Movimento Analisado'}
+                videoFrame={videoFrame}
+                onNewAnalysis={resetAnalysis}
+              />
+            )
           )}
         </div>
       </div>
