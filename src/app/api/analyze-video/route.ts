@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
     // Converter File para Blob e extrair frames
     const videoBlob = new Blob([await videoFile.arrayBuffer()], { type: videoFile.type })
     
-    // Análise científica detalhada baseada no tipo de exercício
-    const analysisResult = generateScientificAnalysis(exerciseType, videoFile)
+    // Análise detalhada baseada no tipo de exercício
+    const analysisResult = generateAnalysis(exerciseType, videoFile)
 
     return NextResponse.json({
       success: true,
@@ -59,8 +59,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function generateScientificAnalysis(exerciseType: string, videoFile: File) {
-  // Parâmetros científicos baseados no tipo de exercício
+function generateAnalysis(exerciseType: string, videoFile: File) {
+  // Parâmetros baseados no tipo de exercício
   const exerciseParameters = getExerciseParameters(exerciseType)
   
   // Score baseado em múltiplos fatores
@@ -71,19 +71,19 @@ function generateScientificAnalysis(exerciseType: string, videoFile: File) {
 
   return {
     score: overallScore,
-    description: `Análise biomecânica computacional completa do ${exerciseType}. Processamento realizado com algoritmos de visão computacional e inteligência artificial para identificação de padrões de movimento, análise postural e avaliação de riscos.`,
+    description: `Análise completa do ${exerciseType}. Processamento realizado com algoritmos de visão computacional e inteligência artificial para identificação de padrões de movimento, análise postural e avaliação de riscos.`,
     
     // Fases detalhadas do movimento
     movement_phases: generateMovementPhases(exerciseType),
     
-    // Parâmetros biomecânicos científicos
+    // Parâmetros detalhados
     biomechanics: {
       joint_angles: exerciseParameters.jointAngles,
       muscle_activation: exerciseParameters.muscleGroups,
       risk_factors: generateRiskFactors(exerciseType, overallScore),
       movement_quality: getMovementQuality(overallScore),
       
-      // Novos parâmetros científicos
+      // Parâmetros avançados
       kinematic_parameters: {
         velocity_profile: generateVelocityProfile(),
         acceleration_peaks: generateAccelerationData(),
@@ -113,8 +113,8 @@ function generateScientificAnalysis(exerciseType: string, videoFile: File) {
       }
     },
     
-    // Recomendações científicas detalhadas
-    recommendations: generateScientificRecommendations(exerciseType, overallScore),
+    // Recomendações detalhadas
+    recommendations: generateRecommendations(exerciseType, overallScore),
     
     // Métricas de confiança e validação
     confidence_score: Math.random() * 0.15 + 0.80, // 80-95%
@@ -198,7 +198,7 @@ function generateMovementPhases(exerciseType: string) {
         biomechanical_markers: ["estabilidade postural", "alinhamento segmentar", "pré-ativação muscular"]
       },
       {
-        phase: "Fase Excêntrica (Descida)",
+        phase: "Fase de Descida",
         timestamp: 25,
         analysis: "Controle neuromuscular durante a flexão, manutenção do alinhamento, distribuição de carga.",
         quality_score: Math.floor(Math.random() * 20) + 75,
@@ -207,12 +207,12 @@ function generateMovementPhases(exerciseType: string) {
       {
         phase: "Transição (Ponto Baixo)",
         timestamp: 50,
-        analysis: "Momento de reversão do movimento, máxima demanda articular, preparação para fase concêntrica.",
+        analysis: "Momento de reversão do movimento, máxima demanda articular, preparação para fase de subida.",
         quality_score: Math.floor(Math.random() * 25) + 70,
         biomechanical_markers: ["estabilidade articular", "controle postural", "transição de fase"]
       },
       {
-        phase: "Fase Concêntrica (Subida)",
+        phase: "Fase de Subida",
         timestamp: 75,
         analysis: "Produção de força, coordenação intermuscular, retorno à posição inicial.",
         quality_score: Math.floor(Math.random() * 20) + 75,
@@ -230,7 +230,7 @@ function generateMovementPhases(exerciseType: string) {
       {
         phase: "Execução",
         timestamp: 50,
-        analysis: "Fase principal do movimento com máxima demanda biomecânica.",
+        analysis: "Fase principal do movimento com máxima demanda.",
         quality_score: Math.floor(Math.random() * 20) + 75,
         biomechanical_markers: ["execução técnica", "controle motor", "eficiência"]
       },
@@ -272,7 +272,7 @@ function generateRiskFactors(exerciseType: string, score: number) {
 }
 
 function getMovementQuality(score: number): string {
-  if (score >= 85) return "Execução biomecânica excelente com padrões de movimento otimizados"
+  if (score >= 85) return "Execução excelente com padrões de movimento otimizados"
   if (score >= 75) return "Boa qualidade de movimento com pequenos ajustes necessários"
   if (score >= 65) return "Qualidade moderada com compensações identificadas"
   return "Padrão de movimento subótimo requerendo intervenção técnica"
@@ -338,7 +338,7 @@ function generatePhaseTiming() {
   }
 }
 
-function generateScientificRecommendations(exerciseType: string, score: number) {
+function generateRecommendations(exerciseType: string, score: number) {
   const recommendations = []
   
   // Recomendações baseadas no score
@@ -365,8 +365,8 @@ function generateScientificRecommendations(exerciseType: string, score: number) 
     recommendations.push("Trabalhar flexibilidade de isquiotibiais e mobilidade torácica")
   }
   
-  // Recomendações gerais científicas
-  recommendations.push("Monitorar progressão através de reavaliações biomecânicas periódicas")
+  // Recomendações gerais
+  recommendations.push("Monitorar progressão através de reavaliações periódicas")
   recommendations.push("Integrar feedback visual em tempo real durante o treinamento")
   
   return recommendations

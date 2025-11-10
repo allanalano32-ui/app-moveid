@@ -12,7 +12,7 @@ export interface PDFGenerationOptions {
   includeVideoFrame?: boolean
 }
 
-export class ScientificPDFGenerator {
+export class PDFGenerator {
   private pdf: jsPDF
   private currentY: number = 20
   private pageHeight: number = 297 // A4 height in mm
@@ -26,7 +26,7 @@ export class ScientificPDFGenerator {
     const {
       analysisResult,
       videoFrame,
-      patientName = 'Paciente',
+      patientName = 'Usuário',
       exerciseType = 'Movimento Analisado',
       date = new Date(),
       includeGraphs = true,
@@ -76,7 +76,7 @@ export class ScientificPDFGenerator {
     // Logo/Title
     this.pdf.setFontSize(24)
     this.pdf.setFont('helvetica', 'bold')
-    this.pdf.text('RELATÓRIO DE ANÁLISE BIOMECÂNICA', this.margin, this.currentY)
+    this.pdf.text('RELATÓRIO DE ANÁLISE DE MOVIMENTO', this.margin, this.currentY)
     
     this.currentY += 15
     
@@ -94,10 +94,10 @@ export class ScientificPDFGenerator {
     
     this.pdf.setFontSize(12)
     this.pdf.setFont('helvetica', 'bold')
-    this.pdf.text('DADOS DO PACIENTE', this.margin + 5, this.currentY + 3)
+    this.pdf.text('DADOS DO USUÁRIO', this.margin + 5, this.currentY + 3)
     
     this.pdf.setFont('helvetica', 'normal')
-    this.pdf.text(`Paciente: ${patientName}`, this.margin + 5, this.currentY + 10)
+    this.pdf.text(`Usuário: ${patientName}`, this.margin + 5, this.currentY + 10)
     this.pdf.text(`Exercício: ${exerciseType}`, this.margin + 5, this.currentY + 16)
     this.pdf.text(`Data da Análise: ${date.toLocaleDateString('pt-BR')}`, this.margin + 90, this.currentY + 10)
     this.pdf.text(`Hora: ${date.toLocaleTimeString('pt-BR')}`, this.margin + 90, this.currentY + 16)
@@ -185,7 +185,7 @@ export class ScientificPDFGenerator {
   private addBiomechanicalParameters(result: VideoAnalysisResult) {
     this.checkPageBreak(100)
     
-    this.addSectionTitle('3. PARÂMETROS BIOMECÂNICOS DETALHADOS')
+    this.addSectionTitle('3. PARÂMETROS DETALHADOS')
     
     if (result.biomechanics?.joint_angles && Object.keys(result.biomechanics.joint_angles).length > 0) {
       // Joint Angles Table
@@ -397,7 +397,7 @@ export class ScientificPDFGenerator {
   private addClinicalRecommendations(result: VideoAnalysisResult) {
     this.checkPageBreak(80)
     
-    this.addSectionTitle('7. RECOMENDAÇÕES CLÍNICAS')
+    this.addSectionTitle('7. RECOMENDAÇÕES PERSONALIZADAS')
     
     if (result.recommendations?.length > 0) {
       this.pdf.setFont('helvetica', 'normal')
@@ -432,10 +432,10 @@ export class ScientificPDFGenerator {
     
     this.pdf.setFont('helvetica', 'normal')
     const technicalData = [
-      `• Algoritmo: OpenAI Vision API com análise biomecânica`,
+      `• Algoritmo: OpenAI Vision API com análise de movimento`,
       `• Confiança da IA: ${Math.round((result.confidence_score || 0.85) * 100)}%`,
       `• Método: Análise computacional de movimento`,
-      `• Referências: Padrões biomecânicos estabelecidos`,
+      `• Referências: Padrões estabelecidos`,
       `• Data de processamento: ${new Date().toLocaleString('pt-BR')}`
     ]
     
@@ -455,7 +455,7 @@ export class ScientificPDFGenerator {
     this.pdf.setFontSize(9)
     const disclaimer = this.wrapText(
       'Este relatório foi gerado por inteligência artificial e deve ser interpretado por profissional qualificado. ' +
-      'As recomendações são baseadas em análise computacional e não substituem avaliação clínica presencial.',
+      'As recomendações são baseadas em análise computacional e não substituem avaliação presencial.',
       170
     )
     
@@ -473,7 +473,7 @@ export class ScientificPDFGenerator {
       this.pdf.setFontSize(8)
       this.pdf.setFont('helvetica', 'normal')
       this.pdf.text(
-        `MoveID - Análise Biomecânica com IA | Página ${i} de ${pageCount} | ${new Date().toLocaleDateString('pt-BR')}`,
+        `MoveID - Análise de Movimento com IA | Página ${i} de ${pageCount} | ${new Date().toLocaleDateString('pt-BR')}`,
         this.margin,
         this.pageHeight - 10
       )
@@ -578,6 +578,6 @@ export class ScientificPDFGenerator {
 
 // Export utility function
 export async function generateScientificPDF(options: PDFGenerationOptions): Promise<Blob> {
-  const generator = new ScientificPDFGenerator()
+  const generator = new PDFGenerator()
   return await generator.generateAnalysisReport(options)
 }

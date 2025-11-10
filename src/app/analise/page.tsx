@@ -193,13 +193,13 @@ export default function Analise() {
               <div className="text-center mb-12">
                 <Badge variant="secondary" className="mb-4">
                   <Brain className="mr-2 h-4 w-4" />
-                  Análise Científica com IA Avançada
+                  Análise Inteligente com IA Avançada
                 </Badge>
                 <h1 className="text-4xl font-bold text-gray-900 mb-6">
-                  Análise Biomecânica Computacional
+                  Análise de Movimento Inteligente
                 </h1>
                 <p className="text-xl text-gray-600 mb-8">
-                  Grave um vídeo, faça upload ou tire uma foto para receber análise biomecânica detalhada com parâmetros científicos e relatório completo.
+                  Grave um vídeo, faça upload ou tire uma foto para receber análise detalhada do seu movimento com relatório completo.
                 </p>
               </div>
 
@@ -223,7 +223,7 @@ export default function Analise() {
                     <CardHeader>
                       <CardTitle>Tipo de Exercício (Recomendado)</CardTitle>
                       <CardDescription>
-                        Selecione o tipo de exercício para análise biomecânica mais precisa e parâmetros específicos
+                        Selecione o tipo de exercício para análise mais precisa e recomendações específicas
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -289,7 +289,7 @@ export default function Analise() {
                           <Camera className="h-12 w-12 text-green-600 mx-auto mb-4" />
                           <CardTitle>Gravar Vídeo</CardTitle>
                           <CardDescription>
-                            Use a câmera do celular para gravar
+                            Use a câmera do seu dispositivo para gravar
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -298,7 +298,7 @@ export default function Analise() {
                             className="w-full"
                             onClick={() => setShowRecorder(true)}
                           >
-                            <Smartphone className="mr-2 h-4 w-4" />
+                            <Camera className="mr-2 h-4 w-4" />
                             Abrir Câmera
                           </Button>
                           {recordedVideo && (
@@ -312,7 +312,7 @@ export default function Analise() {
                             </div>
                           )}
                           <p className="text-xs text-gray-500 mt-2">
-                            Recomendado para melhor qualidade
+                            Funciona em celular e computador
                           </p>
                         </CardContent>
                       </Card>
@@ -343,7 +343,7 @@ export default function Analise() {
                         className="bg-blue-600 hover:bg-blue-700"
                       >
                         <Brain className="mr-2 h-5 w-5" />
-                        Iniciar Análise Científica
+                        Iniciar Análise Inteligente
                       </Button>
                     </div>
                   )}
@@ -353,16 +353,16 @@ export default function Analise() {
                     <Card className="text-center">
                       <CardContent className="py-12">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                        <h3 className="text-xl font-semibold mb-2">Processando Análise Biomecânica...</h3>
+                        <h3 className="text-xl font-semibold mb-2">Processando Análise...</h3>
                         <p className="text-gray-600 mb-4">
-                          Nossa IA está realizando análise computacional detalhada com parâmetros científicos avançados.
+                          Nossa IA está analisando seu movimento com tecnologia avançada.
                         </p>
                         <Progress value={analysisProgress} className="max-w-xs mx-auto mb-2" />
                         <p className="text-sm text-gray-500">
-                          {analysisProgress < 30 && "Extraindo frames e identificando pontos anatômicos..."}
-                          {analysisProgress >= 30 && analysisProgress < 60 && "Calculando ângulos articulares e padrões de movimento..."}
-                          {analysisProgress >= 60 && analysisProgress < 90 && "Analisando parâmetros biomecânicos e cinéticos..."}
-                          {analysisProgress >= 90 && "Gerando relatório científico completo..."}
+                          {analysisProgress < 30 && "Extraindo frames e identificando pontos..."}
+                          {analysisProgress >= 30 && analysisProgress < 60 && "Calculando ângulos e padrões de movimento..."}
+                          {analysisProgress >= 60 && analysisProgress < 90 && "Analisando parâmetros e qualidade..."}
+                          {analysisProgress >= 90 && "Gerando relatório completo..."}
                         </p>
                       </CardContent>
                     </Card>
@@ -395,7 +395,7 @@ export default function Analise() {
               </Tabs>
             </>
           ) : (
-            /* Results Section - Novo Componente Científico */
+            /* Results Section */
             analysisResult && (
               <ScientificResults
                 analysisResult={analysisResult}

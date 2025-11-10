@@ -55,7 +55,7 @@ export default function ScientificResults({
       const url = URL.createObjectURL(pdfBlob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `analise-biomecanica-${exerciseType}-${Date.now()}.pdf`
+      a.download = `analise-movimento-${exerciseType}-${Date.now()}.pdf`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -100,10 +100,10 @@ export default function ScientificResults({
       <div className="text-center">
         <Badge variant="secondary" className="mb-4">
           <CheckCircle className="mr-2 h-4 w-4" />
-          Análise Biomecânica Completa
+          Análise Completa
         </Badge>
         <h1 className="text-4xl font-bold text-gray-900 mb-6">
-          Relatório Científico - {exerciseType}
+          Relatório de Análise - {exerciseType}
         </h1>
         
         {/* Score Principal */}
@@ -112,7 +112,7 @@ export default function ScientificResults({
             <div className={`text-6xl font-bold mb-4 ${getScoreColor(analysisResult.score)}`}>
               {analysisResult.score}
             </div>
-            <div className="text-xl text-gray-600 mb-2">Score Biomecânico</div>
+            <div className="text-xl text-gray-600 mb-2">Score de Qualidade</div>
             <Badge variant="secondary" className="text-lg px-4 py-2">
               {getScoreLabel(analysisResult.score)}
             </Badge>
@@ -127,9 +127,9 @@ export default function ScientificResults({
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-          <TabsTrigger value="biomechanics">Biomecânica</TabsTrigger>
+          <TabsTrigger value="biomechanics">Detalhes</TabsTrigger>
           <TabsTrigger value="phases">Fases</TabsTrigger>
-          <TabsTrigger value="kinetics">Cinética</TabsTrigger>
+          <TabsTrigger value="kinetics">Métricas</TabsTrigger>
           <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
         </TabsList>
 
@@ -141,7 +141,7 @@ export default function ScientificResults({
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Activity className="mr-2 h-5 w-5 text-blue-600" />
-                  Resumo Executivo
+                  Resumo da Análise
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -235,7 +235,7 @@ export default function ScientificResults({
           )}
         </TabsContent>
 
-        {/* Análise Biomecânica */}
+        {/* Análise Detalhada */}
         <TabsContent value="biomechanics" className="space-y-6">
           {/* Ângulos Articulares */}
           {analysisResult.biomechanics?.joint_angles && Object.keys(analysisResult.biomechanics.joint_angles).length > 0 && (
@@ -275,7 +275,7 @@ export default function ScientificResults({
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Zap className="mr-2 h-5 w-5 text-green-600" />
-                  Ativação Muscular
+                  Músculos Ativados
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -291,13 +291,13 @@ export default function ScientificResults({
             </Card>
           )}
 
-          {/* Parâmetros Cinemáticos */}
+          {/* Parâmetros de Movimento */}
           {(analysisResult as any).biomechanics?.kinematic_parameters && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <LineChart className="mr-2 h-5 w-5 text-purple-600" />
-                  Parâmetros Cinemáticos
+                  Parâmetros de Movimento
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -350,7 +350,7 @@ export default function ScientificResults({
                       </Badge>
                     </div>
                     <CardDescription>
-                      Timestamp: {phase.timestamp}% do movimento
+                      Momento: {phase.timestamp}% do movimento
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -365,11 +365,11 @@ export default function ScientificResults({
                       <Progress value={phase.quality_score} className="h-3" />
                     </div>
                     
-                    {/* Marcadores Biomecânicos */}
+                    {/* Marcadores */}
                     {(phase as any).biomechanical_markers && (
                       <div>
                         <div className="text-sm font-medium text-gray-900 mb-2">
-                          Marcadores Biomecânicos:
+                          Pontos Analisados:
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {(phase as any).biomechanical_markers.map((marker: string, idx: number) => (
@@ -387,7 +387,7 @@ export default function ScientificResults({
           )}
         </TabsContent>
 
-        {/* Análise Cinética */}
+        {/* Métricas Avançadas */}
         <TabsContent value="kinetics" className="space-y-6">
           {(analysisResult as any).biomechanics?.kinetic_parameters && (
             <div className="grid md:grid-cols-2 gap-6">
@@ -509,10 +509,10 @@ export default function ScientificResults({
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <CheckCircle className="mr-2 h-5 w-5 text-green-600" />
-                  Recomendações Científicas
+                  Recomendações Personalizadas
                 </CardTitle>
                 <CardDescription>
-                  Sugestões baseadas em análise biomecânica computacional
+                  Sugestões baseadas na análise do seu movimento
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -535,13 +535,13 @@ export default function ScientificResults({
             </Card>
           )}
 
-          {/* Comparação Normativa */}
+          {/* Comparação com População */}
           {(analysisResult as any).normative_comparison && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <PieChart className="mr-2 h-5 w-5 text-purple-600" />
-                  Comparação com População
+                  Comparação com Outros Usuários
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -551,21 +551,21 @@ export default function ScientificResults({
                       {(analysisResult as any).normative_comparison.percentile_rank}º
                     </div>
                     <div className="text-sm text-purple-700">
-                      Percentil Geral
+                      Posição Geral
                     </div>
                   </div>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span>Faixa Etária:</span>
-                      <span>{(analysisResult as any).normative_comparison.population_comparison.age_group_percentile}º percentil</span>
+                      <span>{(analysisResult as any).normative_comparison.population_comparison.age_group_percentile}º posição</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Gênero:</span>
-                      <span>{(analysisResult as any).normative_comparison.population_comparison.gender_percentile}º percentil</span>
+                      <span>{(analysisResult as any).normative_comparison.population_comparison.gender_percentile}º posição</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Nível de Atividade:</span>
-                      <span>{(analysisResult as any).normative_comparison.population_comparison.activity_level_percentile}º percentil</span>
+                      <span>{(analysisResult as any).normative_comparison.population_comparison.activity_level_percentile}º posição</span>
                     </div>
                     <div className="flex justify-between font-medium">
                       <span>Potencial de Melhoria:</span>
@@ -588,7 +588,7 @@ export default function ScientificResults({
           className="bg-blue-600 hover:bg-blue-700"
         >
           <Download className="mr-2 h-5 w-5" />
-          {isGeneratingPDF ? 'Gerando PDF...' : 'Baixar Relatório Científico'}
+          {isGeneratingPDF ? 'Gerando PDF...' : 'Baixar Relatório Completo'}
         </Button>
         <Button size="lg" variant="outline" onClick={onNewAnalysis}>
           Nova Análise
