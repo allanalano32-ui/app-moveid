@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -22,7 +22,7 @@ import {
   User
 } from 'lucide-react'
 import Link from 'next/link'
-import { generatePDFReport } from '@/lib/pdf-generator'
+import { generateScientificPDF } from '@/lib/pdf-generator'
 
 // Dados simulados de análise (baseado no OpenCap.ai)
 const analysisData = {
@@ -91,6 +91,12 @@ const analysisData = {
 
 export default function RelatoriosPage() {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+  const [formattedDate, setFormattedDate] = useState('')
+
+  // Corrigir hydration mismatch - formatar data apenas no cliente
+  useEffect(() => {
+    setFormattedDate(new Date(analysisData.date).toLocaleDateString('pt-BR'))
+  }, [])
 
   const handleGeneratePDF = async () => {
     setIsGeneratingPDF(true)
@@ -99,8 +105,51 @@ export default function RelatoriosPage() {
       // Pequeno delay para mostrar o loading
       await new Promise(resolve => setTimeout(resolve, 1000))
       
+      // Converter dados para o formato esperado pela função PDF
+      const pdfOptions = {
+        analysisResult: {
+          score: analysisData.overall_score,
+          description: `Análise completa do movimento ${analysisData.movement_type} realizada em ${analysisData.date}. Confiança da IA: ${analysisData.confidence}%.`,
+          confidence_score: analysisData.confidence / 100,
+          biomechanics: {
+            joint_angles: {
+              joelho: analysisData.biomechanical_metrics.knee_angle_max,
+              quadril: analysisData.biomechanical_metrics.hip_angle_max,
+              tornozelo: analysisData.biomechanical_metrics.ankle_dorsiflexion,
+              tronco: analysisData.biomechanical_metrics.trunk_lean
+            },
+            muscle_activation: ['quadríceps', 'glúteos', 'isquiotibiais', 'panturrilha'],
+            risk_factors: analysisData.recommendations
+              .filter(rec => rec.type === 'critical')
+              .map(rec => rec.title)
+          },
+          movement_phases: analysisData.phase_analysis.map(phase => ({
+            phase: phase.phase,
+            timestamp: `${Math.round(Math.random() * 100)}`,
+            quality_score: phase.score,
+            analysis: phase.notes
+          })),
+          recommendations: analysisData.recommendations.map(rec => rec.description)
+        },
+        patientName: 'Usuário',
+        exerciseType: analysisData.movement_type,
+        date: new Date(analysisData.date),
+        includeGraphs: true,
+        includeVideoFrame: false
+      }
+      
       // Gerar PDF usando o serviço
-      generatePDFReport(analysisData)
+      const pdfBlob = await generateScientificPDF(pdfOptions)
+      
+      // Criar link para download
+      const url = URL.createObjectURL(pdfBlob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `relatorio-${analysisData.movement_type}-${analysisData.date}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
       
     } catch (error) {
       console.error('Erro ao gerar PDF:', error)
@@ -543,7 +592,7 @@ export default function RelatoriosPage() {
             <div className="text-center space-y-4">
               <h3 className="text-lg font-semibold">Relatório Gerado pelo MoveID</h3>
               <p className="text-sm text-gray-600">
-                Data: {new Date(analysisData.date).toLocaleDateString('pt-BR')} | 
+                Data: {formattedDate || analysisData.date} | 
                 Frames Analisados: {analysisData.frames_analyzed} | 
                 Confiança: {analysisData.confidence}%
               </p>
